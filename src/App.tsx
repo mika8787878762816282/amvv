@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -49,14 +49,25 @@ const AdminRoute = ({ children }: { children: JSX.Element }) => {
 
 const DebugOverlay = () => {
     const { user, profile, loading } = useAuth();
+    const [isVisible, setIsVisible] = useState(true);
+
+    if (!isVisible) return null;
+
     return (
         <div className="fixed bottom-4 right-4 bg-black/90 text-white p-4 rounded-lg z-[9999] text-xs shadow-xl border border-white/20">
-            <h3 className="font-bold mb-2 border-b border-white/20 pb-1">Debug Info</h3>
+            <button
+                onClick={() => setIsVisible(false)}
+                className="absolute top-2 right-2 text-gray-400 hover:text-white font-bold"
+                title="Fermer"
+            >
+                ✕
+            </button>
+            <h3 className="font-bold mb-2 border-b border-white/20 pb-1 pr-6">Debug Info</h3>
             <div className="space-y-1 font-mono">
                 <p><span className="text-gray-400">User:</span> {user?.email || 'Aucun'}</p>
                 <p><span className="text-gray-400">Role:</span> <span className={profile?.role === 'admin' ? 'text-green-400 font-bold' : 'text-red-400'}>{profile?.role || 'Aucun'}</span></p>
                 <p><span className="text-gray-400">Loading:</span> {loading ? 'Oui' : 'Non'}</p>
-                <p><span className="text-gray-400">Project:</span> {import.meta.env.VITE_SUPABASE_URL?.substr(8, 20)}...</p>
+                <p><span className="text-gray-400">Project:</span> {import.meta.env.VITE_SUPABASE_URL?.substring(8, 20)}...</p>
             </div>
         </div>
     );

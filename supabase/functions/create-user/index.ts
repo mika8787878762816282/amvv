@@ -13,8 +13,12 @@ Deno.serve(async (req: Request) => {
     }
 
     try {
+        console.log(`[Create-User] Request received: ${req.method} ${req.url}`);
+
         // Verify the caller is an admin
         const authHeader = req.headers.get('Authorization');
+        console.log(`[Create-User] Auth header present: ${!!authHeader}`);
+
         if (!authHeader) {
             throw new Error('Missing authorization header');
         }
@@ -28,8 +32,11 @@ Deno.serve(async (req: Request) => {
 
         const { data: { user: caller }, error: callerError } = await callerClient.auth.getUser();
         if (callerError || !caller) {
+            console.error("[Create-User] Auth validation failed:", callerError);
             throw new Error('Invalid authentication token');
         }
+
+        console.log(`[Create-User] Caller authenticated: ${caller.id}`);
 
         // Check if caller is admin
         const { data: callerProfile } = await callerClient
@@ -37,6 +44,8 @@ Deno.serve(async (req: Request) => {
             .select('role')
             .eq('id', caller.id)
             .single();
+
+        console.log(`[Create-User] Caller role: ${callerProfile?.role}`);
 
         if (callerProfile?.role !== 'admin') {
             throw new Error('Only admins can create users');
@@ -80,6 +89,7 @@ Deno.serve(async (req: Request) => {
             }
         );
     } catch (error: any) {
+        console.error("[Create-User] Error:", error.message);
         return new Response(
             JSON.stringify({ error: error.message }),
             {
