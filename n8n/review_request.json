@@ -1,0 +1,75 @@
+{
+    "name": "AMG - Demande Avis (Webhook)",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "demande-avis-client",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                250,
+                300
+            ],
+            "webhookId": "demande-avis-client"
+        },
+        {
+            "parameters": {
+                "jsCode": "const input = $input.first().json.body || $input.first().json;\n\nconst clientName = input.client_name || 'Client';\nconst clientEmail = input.client_email || '';\nconst companyName = input.company_name || 'AMG Rénovation';\nconst reviewId = input.review_id || '';\n\n// Google Review link (replace with actual link)\nconst googleReviewLink = 'https://g.page/r/amg-renovation/review';\n\nconst emailSubject = `${companyName} — Votre avis compte !`;\n\nconst emailBody = `Bonjour ${clientName},\\n\\nMerci d'avoir choisi ${companyName} pour vos travaux de rénovation !\\n\\nVotre satisfaction est notre priorité. Pourriez-vous prendre quelques secondes pour nous laisser un avis sur Google ?\\n\\n👉 ${googleReviewLink}\\n\\nVotre retour nous aide à améliorer nos services et aide d'autres personnes à nous trouver.\\n\\nMerci beaucoup !\\n\\nCordialement,\\nL'équipe ${companyName}`;\n\nconst whatsappMessage = `Bonjour ${clientName} ! 😊 Merci d'avoir fait confiance à ${companyName}. Si vous êtes satisfait de nos travaux, un petit avis Google nous aiderait énormément : ${googleReviewLink} Merci !`;\n\nreturn [{ json: {\n  success: true,\n  review_id: reviewId,\n  client_name: clientName,\n  client_email: clientEmail,\n  email_subject: emailSubject,\n  email_body: emailBody,\n  whatsapp_message: whatsappMessage,\n  google_review_link: googleReviewLink,\n  processed_at: new Date().toISOString(),\n  note: 'To enable actual email/WhatsApp sending, connect a Gmail node or Twilio node after this Code node.'\n} }];"
+            },
+            "name": "Compose Review Request",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                480,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ $json }}"
+            },
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                700,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Compose Review Request",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Compose Review Request": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1",
+        "saveManualExecutions": true,
+        "callerPolicy": "workflowsFromSameOwner"
+    }
+}

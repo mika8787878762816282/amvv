@@ -1,0 +1,19 @@
+Vercel CLI 50.9.1
+Retrieving project…
+Deploying mikas-projects-ac10eb8e/dist
+Inspect: https://vercel.com/mikas-projects-ac10eb8e/dist/77PTN1uhV2dS5dJPJSh9wAHEB93D [1s]
+Production: https://dist-eao34wg0r-mikas-projects-ac10eb8e.vercel.app [1s]
+https://dist-eao34wg0r-mikas-projects-ac10eb8e.vercel.appBuilding...
+Building...
+Building: Running build in Portland, USA (West) – pdx1
+Building: Build machine configuration: 2 cores, 8 GB
+Building: Retrieving list of deployment files...
+Building: Previous build caches not available.
+Building: Downloading 4 deployment files...
+Building: Running "vercel build"
+Building: Vercel CLI 50.18.0
+Building: Build Completed in /vercel/output [20ms]
+Building: Deploying outputs...
+[2K[1A[2K[GProduction: https://dist-eao34wg0r-mikas-projects-ac10eb8e.vercel.app [8s]
+Completing...
+Aliased: https://dist-bice-nu-73.vercel.app [8s]

@@ -1,0 +1,43 @@
+﻿src/components/appointments/CreateAppointmentDialog.tsx(10,29): error TS6133: 'Clock' is declared but its value is never read.
+src/components/appointments/CreateAppointmentDialog.tsx(84,60): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(values: never, options?: { count?: "exact" | "planned" | "estimated" | undefined; } | undefined): PostgrestFilterBuilder<{ PostgrestVersion: "12"; }, never, never, null, "appointments", never, "POST">', gave the following error.
+    Argument of type '{ client_name: string; phone_number: string; appointment_date: string; appointment_type: string; status: string; notes: string; }' is not assignable to parameter of type 'never'.
+  Overload 2 of 2, '(values: never[], options?: { count?: "exact" | "planned" | "estimated" | undefined; defaultToNull?: boolean | undefined; } | undefined): PostgrestFilterBuilder<{ PostgrestVersion: "12"; }, never, never, null, "appointments", never, "POST">', gave the following error.
+    Argument of type '{ client_name: string; phone_number: string; appointment_date: string; appointment_type: string; status: string; notes: string; }' is not assignable to parameter of type 'never[]'.
+      Type '{ client_name: string; phone_number: string; appointment_date: string; appointment_type: string; status: string; notes: string; }' is missing the following properties from type 'never[]': length, pop, push, concat, and 29 more.
+src/components/crm/ClientsCRM.tsx(4,29): error TS6133: 'CardHeader' is declared but its value is never read.
+src/components/crm/ClientsCRM.tsx(4,41): error TS6133: 'CardTitle' is declared but its value is never read.
+src/components/crm/ClientsCRM.tsx(14,14): error TS6133: 'ChevronDown' is declared but its value is never read.
+src/components/crm/ClientsCRM.tsx(122,48): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(values: never, options?: { count?: "exact" | "planned" | "estimated" | undefined; } | undefined): PostgrestFilterBuilder<{ PostgrestVersion: "12"; }, never, never, null, "clients", never, "POST">', gave the following error.
+    Argument of type '{ firstname: string; lastname: string; email: string; phone: string; notes: string; }' is not assignable to parameter of type 'never'.
+  Overload 2 of 2, '(values: never[], options?: { count?: "exact" | "planned" | "estimated" | undefined; defaultToNull?: boolean | undefined; } | undefined): PostgrestFilterBuilder<{ PostgrestVersion: "12"; }, never, never, null, "clients", never, "POST">', gave the following error.
+    Object literal may only specify known properties, and 'firstname' does not exist in type 'never[]'.
+src/components/facebook/FacebookAutoPost.tsx(4,52): error TS6133: 'CardDescription' is declared but its value is never read.
+src/components/facebook/FacebookAutoPost.tsx(18,11): error TS6133: 'queryClient' is declared but its value is never read.
+src/components/facebook/FacebookAutoPost.tsx(22,12): error TS6133: 'imageFile' is declared but its value is never read.
+src/components/facebook/FacebookAutoPost.tsx(63,58): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(values: never, options?: { count?: "exact" | "planned" | "estimated" | undefined; } | undefined): PostgrestFilterBuilder<{ PostgrestVersion: "12"; }, never, never, null, "facebook_posts", never, "POST">', gave the following error.
+    Argument of type '{ caption: string; image_url: string | null; scheduled_at: string | null; status: string; created_at: string; }' is not assignable to parameter of type 'never'.
+  Overload 2 of 2, '(values: never[], options?: { count?: "exact" | "planned" | "estimated" | undefined; defaultToNull?: boolean | undefined; } | undefined): PostgrestFilterBuilder<{ PostgrestVersion: "12"; }, never, never, null, "facebook_posts", never, "POST">', gave the following error.
+    Argument of type '{ caption: string; image_url: string | null; scheduled_at: string | null; status: string; created_at: string; }' is not assignable to parameter of type 'never[]'.
+      Type '{ caption: string; image_url: string | null; scheduled_at: string | null; status: string; created_at: string; }' is missing the following properties from type 'never[]': length, pop, push, concat, and 29 more.
+src/components/files/FileManager.tsx(4,29): error TS6133: 'CardHeader' is declared but its value is never read.
+src/components/files/FileManager.tsx(4,41): error TS6133: 'CardTitle' is declared but its value is never read.
+src/components/files/FileManager.tsx(6,1): error TS6133: 'Badge' is declared but its value is never read.
+src/components/files/FileManager.tsx(9,1): error TS6133: 'toast' is declared but its value is never read.
+src/components/quotes/CreateQuoteDialog.tsx(3,60): error TS6133: 'DialogTrigger' is declared but its value is never read.
+src/components/quotes/CreateQuoteDialog.tsx(83,27): error TS6133: 'quoteData' is declared but its value is never read.
+src/integrations/supabase/client.ts(5,33): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/integrations/supabase/client.ts(6,37): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/pages/admin/UserManagement.tsx(9,26): error TS2307: Cannot find module '@/components/ui/checkbox' or its corresponding type declarations.
+src/pages/admin/UserManagement.tsx(10,79): error TS6133: 'DialogTrigger' is declared but its value is never read.
+src/pages/admin/UserManagement.tsx(11,1): error TS6133: 'ScrollArea' is declared but its value is never read.
+src/pages/admin/UserManagement.tsx(13,51): error TS6133: 'Check' is declared but its value is never read.
+src/pages/admin/UserManagement.tsx(13,58): error TS6133: 'X' is declared but its value is never read.
+src/pages/admin/UserManagement.tsx(86,25): error TS2345: Argument of type '{ role: string; enabled_features: string[]; n8n_config: Record<string, string>; }' is not assignable to parameter of type 'never'.
+src/pages/Dashboard.tsx(164,50): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(values: never, options?: { count?: "exact" | "planned" | "estimated" | undefined; } | undefined): PostgrestFilterBuilder<{ PostgrestVersion: "12"; }, never, never, null, "whatsapp_messages", never, "POST">', gave the following error.
+    Argument of type '{ sender: string; phone_number: any; message_content: string; received_at: string; }' is not assignable to parameter of type 'never'.
+  Overload 2 of 2, '(values: never[], options?: { count?: "exact" | "planned" | "estimated" | undefined; defaultToNull?: boolean | undefined; } | undefined): PostgrestFilterBuilder<{ PostgrestVersion: "12"; }, never, never, null, "whatsapp_messages", never, "POST">', gave the following error.
+    Object literal may only specify known properties, and 'sender' does not exist in type 'never[]'.

@@ -1,0 +1,20 @@
+src/components/appointments/CreateAppointmentDialog.tsx(10,29): error TS6133: 'Clock' is declared but its value is never read.
+src/components/crm/ClientsCRM.tsx(4,29): error TS6133: 'CardHeader' is declared but its value is never read.
+src/components/crm/ClientsCRM.tsx(4,41): error TS6133: 'CardTitle' is declared but its value is never read.
+src/components/crm/ClientsCRM.tsx(14,14): error TS6133: 'ChevronDown' is declared but its value is never read.
+src/components/facebook/FacebookAutoPost.tsx(4,52): error TS6133: 'CardDescription' is declared but its value is never read.
+src/components/facebook/FacebookAutoPost.tsx(18,11): error TS6133: 'queryClient' is declared but its value is never read.
+src/components/facebook/FacebookAutoPost.tsx(22,12): error TS6133: 'imageFile' is declared but its value is never read.
+src/components/files/FileManager.tsx(4,29): error TS6133: 'CardHeader' is declared but its value is never read.
+src/components/files/FileManager.tsx(4,41): error TS6133: 'CardTitle' is declared but its value is never read.
+src/components/files/FileManager.tsx(6,1): error TS6133: 'Badge' is declared but its value is never read.
+src/components/files/FileManager.tsx(9,1): error TS6133: 'toast' is declared but its value is never read.
+src/components/quotes/CreateQuoteDialog.tsx(3,60): error TS6133: 'DialogTrigger' is declared but its value is never read.
+src/components/quotes/CreateQuoteDialog.tsx(83,27): error TS6133: 'quoteData' is declared but its value is never read.
+src/integrations/supabase/client.ts(5,33): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/integrations/supabase/client.ts(6,37): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/pages/admin/UserManagement.tsx(9,26): error TS2307: Cannot find module '@/components/ui/checkbox' or its corresponding type declarations.
+src/pages/admin/UserManagement.tsx(10,79): error TS6133: 'DialogTrigger' is declared but its value is never read.
+src/pages/admin/UserManagement.tsx(11,1): error TS6133: 'ScrollArea' is declared but its value is never read.
+src/pages/admin/UserManagement.tsx(13,51): error TS6133: 'Check' is declared but its value is never read.
+src/pages/admin/UserManagement.tsx(13,58): error TS6133: 'X' is declared but its value is never read.

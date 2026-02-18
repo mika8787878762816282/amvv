@@ -1,0 +1,75 @@
+{
+    "name": "AMG - Facebook Auto-Post (Webhook)",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "facebook-autopost",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                250,
+                300
+            ],
+            "webhookId": "facebook-autopost"
+        },
+        {
+            "parameters": {
+                "jsCode": "const input = $input.first().json.body || $input.first().json;\n\nconst caption = input.caption || '';\nconst imageUrl = input.image_url || null;\nconst scheduledAt = input.scheduled_at || null;\nconst companyName = input.company_name || 'AMG Rénovation';\n\n// Prepare Facebook Graph API payload\nconst fbPayload = {\n  message: caption,\n  published: !scheduledAt,\n};\n\nif (scheduledAt) {\n  fbPayload.scheduled_publish_time = Math.floor(new Date(scheduledAt).getTime() / 1000);\n  fbPayload.published = false;\n}\n\nif (imageUrl) {\n  fbPayload.url = imageUrl;\n}\n\nconst response = {\n  success: true,\n  action: scheduledAt ? 'scheduled' : 'published',\n  scheduled_at: scheduledAt,\n  caption_preview: caption.substring(0, 100) + (caption.length > 100 ? '...' : ''),\n  company: companyName,\n  processed_at: new Date().toISOString(),\n  fb_payload: fbPayload,\n  note: 'To enable actual Facebook posting, add your Page Access Token and configure the HTTP Request node to POST to https://graph.facebook.com/v18.0/{page-id}/feed'\n};\n\nreturn [{ json: response }];"
+            },
+            "name": "Prepare FB Post",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                480,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ $json }}"
+            },
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                700,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare FB Post",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare FB Post": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1",
+        "saveManualExecutions": true,
+        "callerPolicy": "workflowsFromSameOwner"
+    }
+}

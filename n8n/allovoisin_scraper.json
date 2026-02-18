@@ -1,0 +1,75 @@
+{
+    "name": "AMG - Scraper AlloVoisin (Webhook)",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "allovoisin-leads",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                250,
+                300
+            ],
+            "webhookId": "allovoisin-leads"
+        },
+        {
+            "parameters": {
+                "jsCode": "const input = $input.first().json.body || $input.first().json;\n\n// Process leads from AlloVoisin emails or API\nconst leads = input.leads || [input];\n\nconst processedLeads = leads.map(lead => {\n  const projectType = lead.project_type || lead.title || 'Travaux divers';\n  const city = lead.city || lead.location || 'Paris';\n  const clientName = lead.client_name || lead.name || 'Client AlloVoisin';\n  \n  // Simple distance estimation (would use Google Maps API in production)\n  const postalCode = lead.postal_code || '75000';\n  const isLocal = postalCode.startsWith('75') || postalCode.startsWith('92') || postalCode.startsWith('93') || postalCode.startsWith('94');\n  const estimatedDistance = isLocal ? Math.floor(Math.random() * 15) + 1 : Math.floor(Math.random() * 30) + 15;\n  \n  // Price estimation based on project type\n  let priceMin = 500, priceMax = 2000;\n  const type = projectType.toLowerCase();\n  if (type.includes('rénovation') || type.includes('renovation')) { priceMin = 3000; priceMax = 15000; }\n  else if (type.includes('salle de bain') || type.includes('cuisine')) { priceMin = 4000; priceMax = 12000; }\n  else if (type.includes('peinture')) { priceMin = 1000; priceMax = 4000; }\n  else if (type.includes('carrelage')) { priceMin = 1500; priceMax = 5000; }\n  else if (type.includes('plomberie')) { priceMin = 500; priceMax = 3000; }\n  \n  return {\n    client_name: clientName,\n    project_type: projectType,\n    city: city,\n    postal_code: postalCode,\n    estimated_price_min: lead.estimated_price_min || priceMin,\n    estimated_price_max: lead.estimated_price_max || priceMax,\n    distance_km: estimatedDistance,\n    status: 'pending',\n    email_date: lead.email_date || new Date().toISOString(),\n    original_link: lead.original_link || lead.url || null,\n    is_local: isLocal\n  };\n});\n\nreturn [{ json: { success: true, total: processedLeads.length, local: processedLeads.filter(l => l.is_local).length, leads: processedLeads } }];"
+            },
+            "name": "Process AlloVoisin Leads",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                480,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ $json }}"
+            },
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                700,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Process AlloVoisin Leads",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Process AlloVoisin Leads": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1",
+        "saveManualExecutions": true,
+        "callerPolicy": "workflowsFromSameOwner"
+    }
+}

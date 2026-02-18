@@ -1,0 +1,75 @@
+{
+    "name": "AMG - Envoi Facture (Webhook)",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "envoi-facture",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                250,
+                300
+            ],
+            "webhookId": "envoi-facture"
+        },
+        {
+            "parameters": {
+                "jsCode": "const input = $input.first().json.body || $input.first().json;\n\nconst date = input['Date'] || new Date().toLocaleDateString('fr-FR');\nconst nom = input['Nom'] || 'Client';\nconst prenom = input['Prénom'] || '';\nconst email = input['Email'] || '';\nconst prixHT = input['Prix HT'] || 0;\nconst tva = input['TVA'] || 20;\nconst prixTTC = input['Prix TTC'] || (prixHT * (1 + tva/100));\nconst numFacture = input['Numéro de facture'] || 'F-' + Date.now();\nconst numDevis = input['Numéro de devis'] || 'N/A';\nconst description = input['Description'] || 'Travaux de rénovation';\n\nconst html = `\n<!DOCTYPE html>\n<html>\n<head><meta charset=\"utf-8\"><style>\n  body { font-family: 'Segoe UI', Arial, sans-serif; margin: 40px; color: #333; }\n  .header { display: flex; justify-content: space-between; border-bottom: 3px solid #16a34a; padding-bottom: 20px; margin-bottom: 30px; }\n  .company { font-size: 24px; font-weight: bold; color: #16a34a; }\n  .facture-num { font-size: 14px; color: #666; }\n  .client-info { background: #f0fdf4; padding: 20px; border-radius: 8px; margin-bottom: 30px; }\n  table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }\n  th { background: #16a34a; color: white; padding: 12px; text-align: left; }\n  td { padding: 12px; border-bottom: 1px solid #e2e8f0; }\n  .total-row { font-weight: bold; font-size: 18px; color: #16a34a; }\n  .payment { background: #fefce8; padding: 15px; border-radius: 8px; border: 1px solid #fde047; margin-top: 20px; }\n  .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #666; }\n</style></head>\n<body>\n  <div class=\"header\">\n    <div class=\"company\">AMG Rénovation</div>\n    <div><div class=\"facture-num\">Facture ${numFacture}</div><div>Date: ${date}</div><div>Réf. Devis: ${numDevis}</div></div>\n  </div>\n  <div class=\"client-info\">\n    <strong>Client:</strong> ${prenom} ${nom}<br>\n    <strong>Email:</strong> ${email}\n  </div>\n  <table>\n    <thead><tr><th>Description</th><th>Montant HT</th></tr></thead>\n    <tbody><tr><td>${description}</td><td>${prixHT.toLocaleString('fr-FR')} €</td></tr></tbody>\n  </table>\n  <table>\n    <tr><td>Total HT</td><td><strong>${prixHT.toLocaleString('fr-FR')} €</strong></td></tr>\n    <tr><td>TVA (${tva}%)</td><td>${(prixTTC - prixHT).toLocaleString('fr-FR')} €</td></tr>\n    <tr class=\"total-row\"><td>Total TTC</td><td>${prixTTC.toLocaleString('fr-FR')} €</td></tr>\n  </table>\n  <div class=\"payment\">⚠️ <strong>Paiement attendu sous 30 jours</strong> par virement bancaire.<br>IBAN: FR76 1234 5678 9012 3456 7890 123 — BIC: AMGFRPPXXX</div>\n  <div class=\"footer\">AMG Rénovation — SIRET: 123 456 789 00012 — TVA: FR12345678901</div>\n</body>\n</html>`;\n\nreturn [{ json: { success: true, document_type: 'facture', numero: numFacture, client: `${prenom} ${nom}`, total_ttc: prixTTC, html: html } }];"
+            },
+            "name": "Generate Invoice HTML",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                480,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ $json }}"
+            },
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                700,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Generate Invoice HTML",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate Invoice HTML": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1",
+        "saveManualExecutions": true,
+        "callerPolicy": "workflowsFromSameOwner"
+    }
+}

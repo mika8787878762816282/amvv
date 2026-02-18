@@ -1,0 +1,34 @@
+{
+    "name": "AMG - Visualisation IA (Webhook)",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "visualisation-ia",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "content": "Ce workflow devrait :\n1. Recevoir l'image et le prompt\n2. Appeler l'API Gemini ou Replicate\n3. Stocker le résultat dans Supabase Bucket\n4. Créer une entrée dans la table ai_renderings",
+                "height": 194,
+                "width": 313
+            },
+            "name": "Note",
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                450,
+                250
+            ]
+        }
+    ],
+    "connections": {}
+}

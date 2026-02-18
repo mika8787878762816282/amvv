@@ -1,0 +1,75 @@
+{
+    "name": "AMG - Scraper Facebook (Marketplace)",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "facebook-scrape-webhook",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                250,
+                300
+            ],
+            "webhookId": "facebook-scrape-webhook"
+        },
+        {
+            "parameters": {
+                "jsCode": "const input = $input.first().json.body || $input.first().json;\n\n// Expect data from external scraper (e.g., Browsing AI or manual)\nconst posts = input.posts || [input];\n\nconst qualifiedResults = posts.map(post => {\n  const content = (post.post_content || post.content || '').toLowerCase();\n  const author = post.author_name || post.author || 'Inconnu';\n  const url = post.post_url || post.url || '';\n  \n  // Simple keyword-based qualification\n  const renovationKeywords = ['rénovation', 'rénover', 'travaux', 'peinture', 'carrelage', 'salle de bain', 'cuisine', 'plomberie', 'artisan', 'devis'];\n  const matchCount = renovationKeywords.filter(kw => content.includes(kw)).length;\n  \n  let relevance = 'Low';\n  let score = matchCount;\n  if (matchCount >= 3) relevance = 'Excellent';\n  else if (matchCount >= 2) relevance = 'High';\n  else if (matchCount >= 1) relevance = 'Medium';\n  \n  // Check for budget mentions\n  const budgetMatch = content.match(/(\\d+)\\s*€|(\\d+)\\s*euros/i);\n  const hasBudget = !!budgetMatch;\n  if (hasBudget) score += 2;\n  \n  return {\n    author_name: author,\n    post_content: post.post_content || post.content || '',\n    post_url: url,\n    analysis_result: `${relevance} relevance — ${matchCount} keyword matches${hasBudget ? ', budget mentioned' : ''}`,\n    status: matchCount >= 2 ? 'qualified' : 'new',\n    relevance_score: score,\n    scraped_at: new Date().toISOString()\n  };\n});\n\nreturn [{ json: { success: true, total: qualifiedResults.length, qualified: qualifiedResults.filter(r => r.status === 'qualified').length, prospects: qualifiedResults } }];"
+            },
+            "name": "Qualify Prospects",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                480,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ $json }}"
+            },
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                700,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Qualify Prospects",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Qualify Prospects": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1",
+        "saveManualExecutions": true,
+        "callerPolicy": "workflowsFromSameOwner"
+    }
+}
