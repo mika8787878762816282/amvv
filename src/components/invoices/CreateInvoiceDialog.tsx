@@ -92,8 +92,7 @@ export function CreateInvoiceDialog({
                     total_ttc: totalTTC,
                     status: 'pending',
                     items: data.items,
-                    due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // +30 days
-                    clients: { firstname: data.client_name.split(' ')[0] || 'Client', lastname: data.client_name.split(' ').slice(1).join(' ') || '', email: data.client_email }
+                    due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // +30 days
                 })
                 .select()
                 .single();

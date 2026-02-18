@@ -14,7 +14,8 @@ Compress-Archive -Path "$sourceFolder\src", "$sourceFolder\public", "$sourceFold
 Write-Host "Zipping build output..."
 if (Test-Path "$sourceFolder\dist") {
     Compress-Archive -Path "$sourceFolder\dist\*" -DestinationPath $buildZip
-} else {
+}
+else {
     Write-Warning "Dist folder not found. Run 'npm run build' first."
 }
 

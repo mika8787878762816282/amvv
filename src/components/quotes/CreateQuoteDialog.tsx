@@ -88,8 +88,7 @@ export function CreateQuoteDialog({
                     total_ht: totalHT,
                     total_ttc: totalTTC,
                     status: 'draft',
-                    items: data.items,
-                    clients: { firstname: clientData.firstname, lastname: clientData.lastname, email: clientData.email }
+                    items: data.items
                 })
                 .select()
                 .single();
