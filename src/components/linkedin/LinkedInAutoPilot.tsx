@@ -35,7 +35,9 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
 
   const n8nConfig = (companySettings?.n8n_config || {}) as any;
   const n8nBase = n8nConfig?.webhook_base || (import.meta as any).env.VITE_N8N_WEBHOOK_BASE;
-  const connectUrl = n8nBase ? `${n8nBase}/linkedin-connect` : `${window.location.origin}/webhook/linkedin-connect`;
+  const connectPath = n8nConfig?.linkedin_connect_webhook || "/linkedin-connect";
+  const postPath = n8nConfig?.linkedin_post_webhook || "/linkedin-post-secure";
+  const connectUrl = n8nBase ? `${n8nBase}${connectPath}` : `${window.location.origin}/webhook/linkedin-connect`;
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -117,7 +119,7 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
         return;
       }
 
-      const res = await fetch(`${base}/linkedin-post-secure`, {
+      const res = await fetch(`${base}${postPath}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: effectivePostText, email: n8nConfig?.linkedin_default_account || undefined }),

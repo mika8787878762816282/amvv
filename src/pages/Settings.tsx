@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Save, Loader2, Shield } from "lucide-react";
+import { Save, Loader2, Shield, FileText, Receipt, Star, Sparkles, Mail, Search, Facebook, Linkedin } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 export function Settings() {
@@ -19,15 +19,22 @@ export function Settings() {
     const [tvaNumber, setTvaNumber] = useState("");
     const [n8nUrl, setN8nUrl] = useState("");
 
+    const workflowDefs = [
+        { key: "devis_webhook", label: "Devis", defaultPath: "/generer-devis", icon: FileText },
+        { key: "facture_webhook", label: "Factures", defaultPath: "/devis-to-facture", icon: Receipt },
+        { key: "avis_webhook", label: "Avis Clients", defaultPath: "/demande-avis-client", icon: Star },
+        { key: "ia_webhook", label: "Visualisation IA", defaultPath: "/visualisation-ia", icon: Sparkles },
+        { key: "allovoisin_webhook", label: "AlloVoisin", defaultPath: "/allovoisin-leads", icon: Mail },
+        { key: "facebook_webhook", label: "Prospection Facebook", defaultPath: "/facebook-prospects", icon: Search },
+        { key: "facebook_autopost_webhook", label: "Auto-Post Facebook", defaultPath: "/facebook-autopost", icon: Facebook },
+        { key: "linkedin_connect_webhook", label: "LinkedIn Connect", defaultPath: "/linkedin-connect", icon: Linkedin },
+        { key: "linkedin_post_webhook", label: "LinkedIn Post", defaultPath: "/linkedin-post-secure", icon: Linkedin },
+    ] as const;
+
     // Workflow paths
-    const [paths, setPaths] = useState({
-        devis_webhook: "/generer-devis",
-        facture_webhook: "/devis-to-facture",
-        avis_webhook: "/demande-avis-client",
-        ia_webhook: "/visualisation-ia",
-        allovoisin_webhook: "/allovoisin-leads",
-        facebook_webhook: "/facebook-prospects"
-    });
+    const [paths, setPaths] = useState<Record<string, string>>(
+        Object.fromEntries(workflowDefs.map((w) => [w.key, w.defaultPath]))
+    );
 
     // Fetch existing settings
     const { data: settings, refetch } = useQuery({
@@ -57,14 +64,9 @@ export function Settings() {
             setN8nUrl(config?.webhook_base || "");
 
             if (config) {
-                setPaths({
-                    devis_webhook: config.devis_webhook || "/generer-devis",
-                    facture_webhook: config.facture_webhook || "/devis-to-facture",
-                    avis_webhook: config.avis_webhook || "/demande-avis-client",
-                    ia_webhook: config.ia_webhook || "/visualisation-ia",
-                    allovoisin_webhook: config.allovoisin_webhook || "/allovoisin-leads",
-                    facebook_webhook: config.facebook_webhook || "/facebook-prospects"
-                });
+                setPaths(Object.fromEntries(
+                    workflowDefs.map((w) => [w.key, config?.[w.key] || w.defaultPath])
+                ));
             }
         }
     }, [settings]);
@@ -106,7 +108,7 @@ export function Settings() {
         }
     };
 
-    const updatePath = (key: keyof typeof paths, value: string) => {
+    const updatePath = (key: string, value: string) => {
         setPaths(prev => ({ ...prev, [key]: value }));
     };
 
@@ -215,54 +217,33 @@ export function Settings() {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="devis_webhook">Webhook Devis</Label>
-                                <Input
-                                    id="devis_webhook"
-                                    value={paths.devis_webhook}
-                                    onChange={(e) => updatePath("devis_webhook", e.target.value)}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="facture_webhook">Webhook Facture</Label>
-                                <Input
-                                    id="facture_webhook"
-                                    value={paths.facture_webhook}
-                                    onChange={(e) => updatePath("facture_webhook", e.target.value)}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="avis_webhook">Webhook Avis Clients</Label>
-                                <Input
-                                    id="avis_webhook"
-                                    value={paths.avis_webhook}
-                                    onChange={(e) => updatePath("avis_webhook", e.target.value)}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="ia_webhook">Webhook Visualisation IA</Label>
-                                <Input
-                                    id="ia_webhook"
-                                    value={paths.ia_webhook}
-                                    onChange={(e) => updatePath("ia_webhook", e.target.value)}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="allovoisin_webhook">Webhook AlloVoisin</Label>
-                                <Input
-                                    id="allovoisin_webhook"
-                                    value={paths.allovoisin_webhook}
-                                    onChange={(e) => updatePath("allovoisin_webhook", e.target.value)}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="facebook_webhook">Webhook Facebook</Label>
-                                <Input
-                                    id="facebook_webhook"
-                                    value={paths.facebook_webhook}
-                                    onChange={(e) => updatePath("facebook_webhook", e.target.value)}
-                                />
-                            </div>
+                            {workflowDefs.map((wf) => {
+                                const Icon = wf.icon;
+                                const current = paths[wf.key] || wf.defaultPath;
+                                return (
+                                    <div key={wf.key} className="space-y-2 rounded-lg border p-3 bg-muted/20">
+                                        <Label htmlFor={wf.key} className="flex items-center gap-2">
+                                            <Icon className="w-4 h-4" />
+                                            {wf.label}
+                                        </Label>
+                                        <Input
+                                            id={wf.key}
+                                            value={current}
+                                            onChange={(e) => updatePath(wf.key, e.target.value)}
+                                        />
+                                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                            <span>Par défaut: <code>{wf.defaultPath}</code></span>
+                                            <button
+                                                type="button"
+                                                className="underline"
+                                                onClick={() => updatePath(wf.key, wf.defaultPath)}
+                                            >
+                                                Réinitialiser
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </CardContent>
                 </Card>
