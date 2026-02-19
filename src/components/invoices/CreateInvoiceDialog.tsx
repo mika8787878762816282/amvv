@@ -90,7 +90,7 @@ export function CreateInvoiceDialog({
                     invoice_number: invoiceNumber,
                     total_ht: totalHT,
                     total_ttc: totalTTC,
-                    status: 'pending',
+                    status: 'unpaid',
                     items: data.items,
                     due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // +30 days
                 })
