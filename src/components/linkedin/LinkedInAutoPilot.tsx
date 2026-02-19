@@ -113,7 +113,7 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
     }
   };
 
-  const postNow = async () => {
+  const postNow = async (isTest = false) => {
     if (!effectivePostText) {
       toast.error("Le texte du post est vide");
       return;
@@ -146,16 +146,24 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
       }
 
       const postPath = n8nConfig?.linkedin_post_webhook || "/linkedin-post-secure";
+      const textToSend = isTest
+        ? `${effectivePostText}\n\n🧪 Test ${new Date().toLocaleString("fr-FR")}`
+        : effectivePostText;
+
       const res = await fetch(`${base}${postPath}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: effectivePostText, email: n8nConfig?.linkedin_default_account || undefined }),
+        body: JSON.stringify({ text: textToSend, email: n8nConfig?.linkedin_default_account || undefined }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || data?.ok === false) {
-        throw new Error(data?.error || `HTTP ${res.status}`);
+        const err = data?.error || `HTTP ${res.status}`;
+        if (String(err).includes("422")) {
+          throw new Error("LinkedIn refuse ce contenu (souvent doublon). Modifie le texte ou utilise 'Publier un test'.");
+        }
+        throw new Error(err);
       }
-      toast.success("Post LinkedIn publié ✅");
+      toast.success(isTest ? "Post de test publié ✅" : "Post LinkedIn publié ✅");
     } catch (e: any) {
       toast.error(`Échec publication: ${e.message || "inconnu"}`);
     } finally {
@@ -227,13 +235,13 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
               onChange={(e) => setCustomPostText(e.target.value)}
               className="min-h-[180px]"
             />
-            <p className="text-xs text-muted-foreground">Le bouton Publier et Publier un test envoient exactement ce texte.</p>
+            <p className="text-xs text-muted-foreground">Publier envoie ce texte tel quel. Publier un test ajoute juste un suffixe horodaté pour éviter les refus LinkedIn (doublon 422).</p>
           </div>
 
           <div className="flex flex-wrap gap-2 pt-2">
             <Button onClick={saveProfile} disabled={saving}><Save className="w-4 h-4 mr-2" />{saving ? "Sauvegarde..." : "Enregistrer"}</Button>
-            <Button onClick={postNow} disabled={posting}><Send className="w-4 h-4 mr-2" />{posting ? "Publication..." : "Publier"}</Button>
-            <Button variant="secondary" onClick={postNow} disabled={posting}><Send className="w-4 h-4 mr-2" />{posting ? "Publication..." : "Publier un test"}</Button>
+            <Button onClick={() => postNow(false)} disabled={posting}><Send className="w-4 h-4 mr-2" />{posting ? "Publication..." : "Publier"}</Button>
+            <Button variant="secondary" onClick={() => postNow(true)} disabled={posting}><Send className="w-4 h-4 mr-2" />{posting ? "Publication..." : "Publier un test"}</Button>
           </div>
         </CardContent>
       </Card>
