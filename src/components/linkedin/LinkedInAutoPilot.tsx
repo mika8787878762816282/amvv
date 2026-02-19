@@ -32,7 +32,9 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
   const [audience, setAudience] = useState(cfg.audience);
   const [cta, setCta] = useState(cfg.cta);
 
-  const connectUrl = `${window.location.origin}/webhook/linkedin-connect`;
+  const n8nConfig = (companySettings?.n8n_config || {}) as any;
+  const n8nBase = n8nConfig?.webhook_base || (import.meta as any).env.VITE_N8N_WEBHOOK_BASE;
+  const connectUrl = n8nBase ? `${n8nBase}/linkedin-connect` : `${window.location.origin}/webhook/linkedin-connect`;
 
   const buildPost = () => {
     return [
