@@ -20,15 +20,15 @@ export function Settings() {
     const [n8nUrl, setN8nUrl] = useState("");
 
     const workflowDefs = [
-        { key: "devis_webhook", label: "Devis", defaultPath: "/generer-devis", icon: FileText },
-        { key: "facture_webhook", label: "Factures", defaultPath: "/devis-to-facture", icon: Receipt },
-        { key: "avis_webhook", label: "Avis Clients", defaultPath: "/demande-avis-client", icon: Star },
-        { key: "ia_webhook", label: "Visualisation IA", defaultPath: "/visualisation-ia", icon: Sparkles },
-        { key: "allovoisin_webhook", label: "AlloVoisin", defaultPath: "/allovoisin-leads", icon: Mail },
-        { key: "facebook_webhook", label: "Prospection Facebook", defaultPath: "/facebook-prospects", icon: Search },
-        { key: "facebook_autopost_webhook", label: "Auto-Post Facebook", defaultPath: "/facebook-autopost", icon: Facebook },
-        { key: "linkedin_connect_webhook", label: "LinkedIn Connect", defaultPath: "/linkedin-connect", icon: Linkedin },
-        { key: "linkedin_post_webhook", label: "LinkedIn Post", defaultPath: "/linkedin-post-secure", icon: Linkedin },
+        { key: "devis_webhook", label: "Devis", defaultPath: "/generer-devis", workflowName: "AMG - Generer Devis (Webhook)", icon: FileText },
+        { key: "facture_webhook", label: "Factures", defaultPath: "/devis-to-facture", workflowName: "devis-to-facture", icon: Receipt },
+        { key: "avis_webhook", label: "Avis Clients", defaultPath: "/demande-avis-client", workflowName: "demande-avis-client", icon: Star },
+        { key: "ia_webhook", label: "Visualisation IA", defaultPath: "/visualisation-ia", workflowName: "visualisation-ia", icon: Sparkles },
+        { key: "allovoisin_webhook", label: "AlloVoisin", defaultPath: "/allovoisin-leads", workflowName: "AMG - AlloVoisin Leads (Webhook)", icon: Mail },
+        { key: "facebook_webhook", label: "Prospection Facebook", defaultPath: "/facebook-prospects", workflowName: "AMG - Facebook Prospects (Webhook)", icon: Search },
+        { key: "facebook_autopost_webhook", label: "Auto-Post Facebook", defaultPath: "/facebook-autopost", workflowName: "AMG - Facebook Autopost (Webhook)", icon: Facebook },
+        { key: "linkedin_connect_webhook", label: "LinkedIn Connect", defaultPath: "/linkedin-connect", workflowName: "LinkedIn OAuth - Connect (redirect)", icon: Linkedin },
+        { key: "linkedin_post_webhook", label: "LinkedIn Post", defaultPath: "/linkedin-post-secure", workflowName: "LinkedIn - Post Profile (Secure via Supabase)", icon: Linkedin },
     ] as const;
 
     // Workflow paths
@@ -231,6 +231,9 @@ export function Settings() {
                                             value={current}
                                             onChange={(e) => updatePath(wf.key, e.target.value)}
                                         />
+                                        <div className="text-xs text-muted-foreground">
+                                            Workflow n8n cible: <code>{wf.workflowName}</code>
+                                        </div>
                                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                                             <span>Par défaut: <code>{wf.defaultPath}</code></span>
                                             <button
