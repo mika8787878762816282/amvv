@@ -6,12 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Linkedin, Link as LinkIcon, Save, Send } from "lucide-react";
+import { CircleHelp, Linkedin, Link as LinkIcon, Save, Send, Settings2, Wrench } from "lucide-react";
 
 export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySettings: any; onUpdated?: () => void }) {
   const [saving, setSaving] = useState(false);
   const [posting, setPosting] = useState(false);
+  const [helpModal, setHelpModal] = useState<"how" | "vars" | "tech" | null>(null);
 
   const cfg = useMemo(() => {
     const n8n = (companySettings?.n8n_config || {}) as any;
@@ -116,13 +118,25 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
           </h2>
           <p className="text-muted-foreground">Connecte le compte, définis le thème métier, et publie automatiquement chaque semaine.</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <a href={connectUrl} target="_blank" rel="noreferrer">
             <Button variant="outline"><LinkIcon className="w-4 h-4 mr-2" />Connecter LinkedIn</Button>
           </a>
           <Badge variant="secondary">Cible par défaut: Freelances automation</Badge>
         </div>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Guides rapides</CardTitle>
+          <CardDescription>Fenêtres d’explication : quoi fait quoi et quoi modifier.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => setHelpModal("how")}><CircleHelp className="w-4 h-4 mr-2" />Comment ça marche</Button>
+          <Button variant="outline" onClick={() => setHelpModal("vars")}><Settings2 className="w-4 h-4 mr-2" />Variables à changer</Button>
+          <Button variant="outline" onClick={() => setHelpModal("tech")}><Wrench className="w-4 h-4 mr-2" />Workflow technique</Button>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
@@ -166,6 +180,44 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
           <pre className="whitespace-pre-wrap text-sm bg-muted/40 rounded-lg p-4 border">{buildPost()}</pre>
         </CardContent>
       </Card>
+
+      <Dialog open={helpModal === "how"} onOpenChange={(o) => !o && setHelpModal(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Comment ça marche</DialogTitle></DialogHeader>
+          <div className="text-sm space-y-2">
+            <p>1) Le client clique sur <b>Connecter LinkedIn</b> pour autoriser son compte.</p>
+            <p>2) Tu définis le thème, la cible, l’expertise et le CTA dans cette page.</p>
+            <p>3) Le workflow hebdo n8n génère un post et l’envoie à <code>/linkedin-post-secure</code>.</p>
+            <p>4) LinkedIn publie automatiquement sur le compte connecté par défaut.</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={helpModal === "vars"} onOpenChange={(o) => !o && setHelpModal(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Variables à changer</DialogTitle></DialogHeader>
+          <div className="text-sm space-y-2">
+            <p><b>Thème principal</b> : sujet de contenu (ex: “Automatisation pour agences”).</p>
+            <p><b>Cible client</b> : audience précise (ex: freelances automation).</p>
+            <p><b>Expertise</b> : ce que tu sais livrer concrètement.</p>
+            <p><b>Call-to-action</b> : phrase qui pousse à te contacter.</p>
+            <p>Ces variables sont sauvegardées dans <code>company_settings.n8n_config.linkedin_autopost</code>.</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={helpModal === "tech"} onOpenChange={(o) => !o && setHelpModal(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Workflow technique (dev)</DialogTitle></DialogHeader>
+          <div className="text-sm space-y-2">
+            <p><b>/linkedin-connect</b> : lance OAuth LinkedIn.</p>
+            <p><b>/linkedin-oauth-callback</b> : récupère le token et l’enregistre en base.</p>
+            <p><b>/linkedin-post-secure</b> : publie un texte via API LinkedIn.</p>
+            <p><b>AMG - LinkedIn Weekly AutoPost</b> : déclenchement automatique hebdo + génération du post.</p>
+            <p>Pour changer la fréquence : éditer le nœud <b>Schedule Trigger</b> dans n8n.</p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
