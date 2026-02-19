@@ -31,6 +31,7 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
   const [expertise, setExpertise] = useState(cfg.expertise);
   const [audience, setAudience] = useState(cfg.audience);
   const [cta, setCta] = useState(cfg.cta);
+  const [customPostText, setCustomPostText] = useState("");
 
   const n8nConfig = (companySettings?.n8n_config || {}) as any;
   const n8nBase = n8nConfig?.webhook_base || (import.meta as any).env.VITE_N8N_WEBHOOK_BASE;
@@ -60,6 +61,13 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
       cta,
     ].join("\n");
   };
+
+  const generatedPost = buildPost();
+  const effectivePostText = (customPostText || generatedPost).trim();
+
+  useEffect(() => {
+    if (!customPostText) setCustomPostText(generatedPost);
+  }, [generatedPost]);
 
   const saveProfile = async () => {
     if (!companySettings?.id) {
@@ -95,6 +103,11 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
   };
 
   const postNow = async () => {
+    if (!effectivePostText) {
+      toast.error("Le texte du post est vide");
+      return;
+    }
+
     setPosting(true);
     try {
       const n8nConfig = (companySettings?.n8n_config || {}) as any;
@@ -107,7 +120,7 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
       const res = await fetch(`${base}/linkedin-post-secure`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: buildPost(), email: n8nConfig?.linkedin_default_account || undefined }),
+        body: JSON.stringify({ text: effectivePostText, email: n8nConfig?.linkedin_default_account || undefined }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || data?.ok === false) {
@@ -178,8 +191,19 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
             <Input value={cta} onChange={(e) => setCta(e.target.value)} />
           </div>
 
+          <div className="space-y-2">
+            <Label>Texte réellement posté (modifiable)</Label>
+            <Textarea
+              value={customPostText}
+              onChange={(e) => setCustomPostText(e.target.value)}
+              className="min-h-[180px]"
+            />
+            <p className="text-xs text-muted-foreground">Le bouton Publier et Publier un test envoient exactement ce texte.</p>
+          </div>
+
           <div className="flex flex-wrap gap-2 pt-2">
             <Button onClick={saveProfile} disabled={saving}><Save className="w-4 h-4 mr-2" />{saving ? "Sauvegarde..." : "Enregistrer"}</Button>
+            <Button onClick={postNow} disabled={posting}><Send className="w-4 h-4 mr-2" />{posting ? "Publication..." : "Publier"}</Button>
             <Button variant="secondary" onClick={postNow} disabled={posting}><Send className="w-4 h-4 mr-2" />{posting ? "Publication..." : "Publier un test"}</Button>
           </div>
         </CardContent>
@@ -190,7 +214,7 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
           <CardTitle>Aperçu post hebdo</CardTitle>
         </CardHeader>
         <CardContent>
-          <pre className="whitespace-pre-wrap text-sm bg-muted/40 rounded-lg p-4 border">{buildPost()}</pre>
+          <pre className="whitespace-pre-wrap text-sm bg-muted/40 rounded-lg p-4 border">{effectivePostText}</pre>
         </CardContent>
       </Card>
 
