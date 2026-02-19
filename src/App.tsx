@@ -79,9 +79,9 @@ const AppContent = () => {
             <AuthProvider>
                 <TooltipProvider>
                     <Toaster />
-                    <DebugConsole />
+                    {import.meta.env.DEV && <DebugConsole />}
                     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-                        <DebugOverlay />
+                        {import.meta.env.DEV && <DebugOverlay />}
                         <Routes>
                             <Route path="/login" element={<LoginPageWrapper />} />
                             <Route path="/" element={<ProtectedDashboard />} />

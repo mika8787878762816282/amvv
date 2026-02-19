@@ -54,6 +54,7 @@ export function VisualisationAI({ companySettings }: { companySettings: any }) {
                 reader.readAsDataURL(selectedFile);
             });
             const base64Image = await base64Promise;
+            const pureBase64 = base64Image.includes(',') ? base64Image.split(',')[1] : base64Image;
 
             // 2. Call N8N Webhook
             const n8nConfig = companySettings?.n8n_config as any;
@@ -68,7 +69,7 @@ export function VisualisationAI({ companySettings }: { companySettings: any }) {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    image: base64Image,
+                    image: pureBase64,
                     prompt: prompt,
                     company_name: companySettings?.company_name || "AMG Rénovation"
                 }),
@@ -76,7 +77,13 @@ export function VisualisationAI({ companySettings }: { companySettings: any }) {
 
             if (!response.ok) throw new Error("Erreur lors de la génération par l'IA");
 
-            const result = await response.json();
+            let result: any = {};
+            try {
+                result = await response.json();
+            } catch {
+                // Some webhook flows may return empty body with 200
+                result = {};
+            }
 
             // Accept multiple response formats from n8n workflows
             const imageUrl = result.image_url || result.resultImage || result.generated_url;
