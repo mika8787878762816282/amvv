@@ -27,6 +27,7 @@ import {
     Users,
 
     Facebook,
+    Linkedin,
     Send,
     LogOut,
 } from "lucide-react";
@@ -44,6 +45,7 @@ import { Settings } from "@/pages/Settings";
 import { UserManagement } from "@/pages/admin/UserManagement";
 import { ClientsCRM } from "@/components/crm/ClientsCRM";
 import { FacebookAutoPost } from "@/components/facebook/FacebookAutoPost";
+import { LinkedInAutoPilot } from "@/components/linkedin/LinkedInAutoPilot";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Dashboard = () => {
@@ -51,7 +53,7 @@ const Dashboard = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [whatsappInput, setWhatsappInput] = useState("");
 
-    const { signOut, user, profile } = useAuth();
+    const { signOut, user, profile, loading } = useAuth();
 
     // Fetch company settings
     const { data: companySettings = { company_name: "AMG Rénovation", n8n_config: {} } } = useQuery({
@@ -184,6 +186,7 @@ const Dashboard = () => {
         { id: "allovoisin", icon: Mail, label: "Opportunités" },
         { id: "prospection", icon: Search, label: "Prospection" },
         { id: "facebook", icon: Facebook, label: "Auto-Post FB" },
+        { id: "linkedin_auto", icon: Linkedin, label: "Auto-Post LinkedIn" },
         { id: "fichiers", icon: FolderOpen, label: "Fichiers" },
         { id: "users", icon: Users, label: "Utilisateurs" },
         { id: "parametres", icon: SettingsIcon, label: "Paramètres" },
@@ -545,6 +548,7 @@ const Dashboard = () => {
                         {activeTab === "allovoisin" && <AlloVoisinLeads onConvertToQuote={handleConvertLeadToQuote} />}
                         {activeTab === "prospection" && <FacebookProspecting />}
                         {activeTab === "facebook" && <FacebookAutoPost companySettings={companySettings} />}
+                        {activeTab === "linkedin_auto" && <LinkedInAutoPilot companySettings={companySettings} />}
                         {activeTab === "fichiers" && <FileManager />}
                     </div>
                 </main>
