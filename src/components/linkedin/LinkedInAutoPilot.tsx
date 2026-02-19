@@ -23,6 +23,7 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
       audience: n8n?.linkedin_autopost?.audience || "Freelances qui cherchent des missions en automatisation",
       cadence: n8n?.linkedin_autopost?.cadence || "weekly",
       cta: n8n?.linkedin_autopost?.cta || "Écris-moi 'AUTOMATION' et je t’envoie un plan concret.",
+      post_text: n8n?.linkedin_autopost?.post_text || "",
       defaultAccount: n8n?.linkedin_default_account || "",
     };
   }, [companySettings]);
@@ -31,12 +32,11 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
   const [expertise, setExpertise] = useState(cfg.expertise);
   const [audience, setAudience] = useState(cfg.audience);
   const [cta, setCta] = useState(cfg.cta);
-  const [customPostText, setCustomPostText] = useState("");
+  const [customPostText, setCustomPostText] = useState(cfg.post_text || "");
 
   const n8nConfig = (companySettings?.n8n_config || {}) as any;
   const n8nBase = n8nConfig?.webhook_base || (import.meta as any).env.VITE_N8N_WEBHOOK_BASE;
   const connectPath = n8nConfig?.linkedin_connect_webhook || "/linkedin-connect";
-  const postPath = n8nConfig?.linkedin_post_webhook || "/linkedin-post-secure";
   const connectUrl = n8nBase ? `${n8nBase}${connectPath}` : `${window.location.origin}/webhook/linkedin-connect`;
 
   useEffect(() => {
@@ -68,6 +68,14 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
   const effectivePostText = (customPostText || generatedPost).trim();
 
   useEffect(() => {
+    setTheme(cfg.theme);
+    setExpertise(cfg.expertise);
+    setAudience(cfg.audience);
+    setCta(cfg.cta);
+    setCustomPostText(cfg.post_text || generatedPost);
+  }, [cfg.theme, cfg.expertise, cfg.audience, cfg.cta, cfg.post_text]);
+
+  useEffect(() => {
     if (!customPostText) setCustomPostText(generatedPost);
   }, [generatedPost]);
 
@@ -86,6 +94,7 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
         audience,
         cadence: "weekly",
         cta,
+        post_text: effectivePostText,
         updated_at: new Date().toISOString(),
       };
 
@@ -112,13 +121,31 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
 
     setPosting(true);
     try {
-      const n8nConfig = (companySettings?.n8n_config || {}) as any;
+      const n8nConfig = { ...((companySettings?.n8n_config || {}) as any) };
+      n8nConfig.linkedin_autopost = {
+        ...(n8nConfig.linkedin_autopost || {}),
+        theme,
+        expertise,
+        audience,
+        cadence: "weekly",
+        cta,
+        post_text: effectivePostText,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (companySettings?.id) {
+        await (supabase.from("company_settings") as any)
+          .update({ n8n_config: n8nConfig } as any)
+          .eq("id", companySettings.id);
+      }
+
       const base = n8nConfig?.webhook_base || (import.meta as any).env.VITE_N8N_WEBHOOK_BASE;
       if (!base) {
         toast.error("Webhook n8n non configuré");
         return;
       }
 
+      const postPath = n8nConfig?.linkedin_post_webhook || "/linkedin-post-secure";
       const res = await fetch(`${base}${postPath}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
