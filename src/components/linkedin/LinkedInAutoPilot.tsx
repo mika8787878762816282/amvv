@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,17 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
   const n8nConfig = (companySettings?.n8n_config || {}) as any;
   const n8nBase = n8nConfig?.webhook_base || (import.meta as any).env.VITE_N8N_WEBHOOK_BASE;
   const connectUrl = n8nBase ? `${n8nBase}/linkedin-connect` : `${window.location.origin}/webhook/linkedin-connect`;
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const linkedInStatus = params.get("linkedin");
+    if (linkedInStatus === "connected") {
+      toast.success("LinkedIn connecté ✅");
+      params.delete("linkedin");
+      const next = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ""}${window.location.hash || ""}`;
+      window.history.replaceState({}, "", next);
+    }
+  }, []);
 
   const buildPost = () => {
     return [
