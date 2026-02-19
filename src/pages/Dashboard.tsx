@@ -200,6 +200,7 @@ const Dashboard = () => {
     const menuItems = allMenuItems.filter(item =>
         enabledFeatures.includes(item.id) ||
         item.id === 'parametres' ||
+        item.id === 'linkedin_auto' ||
         (item.id === 'users' && profile?.role === 'admin')
     );
 
