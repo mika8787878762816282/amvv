@@ -123,7 +123,7 @@ const Dashboard = () => {
 
         // Use user-specific webhook if available, else fall back to company setting
         const userConfig = profile?.n8n_config as any;
-        const defaultPath = type === 'quote' ? (n8nConfig?.devis_webhook || '/generer-devis') : (n8nConfig?.facture_webhook || '/envoi-facture');
+        const defaultPath = type === 'quote' ? (n8nConfig?.devis_webhook || '/generer-devis') : (n8nConfig?.facture_webhook || '/devis-to-facture');
         const userPath = type === 'quote' ? userConfig?.devis_webhook : userConfig?.facture_webhook;
 
         const endpoint = userPath || defaultPath;

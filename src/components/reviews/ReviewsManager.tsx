@@ -46,6 +46,13 @@ export function ReviewsManager({ companySettings }: { companySettings: any }) {
                 const payload = {
                     client_name: `${review.clients?.firstname} ${review.clients?.lastname}`,
                     client_email: review.clients?.email,
+                    // compatibility with existing n8n workflow fields
+                    nom: `${review.clients?.firstname} ${review.clients?.lastname}`,
+                    email: review.clients?.email,
+                    body: {
+                        nom: `${review.clients?.firstname} ${review.clients?.lastname}`,
+                        email: review.clients?.email,
+                    },
                     company_name: companySettings?.company_name || "AMG Rénovation",
                     review_id: review.id
                 };

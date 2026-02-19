@@ -65,7 +65,7 @@ export function FacebookAutoPost({ companySettings }: { companySettings: any }) 
             // Attempt to call n8n webhook
             const n8nConfig = (companySettings as any)?.n8n_config as any;
             const n8nBase = n8nConfig?.webhook_base || (import.meta as any).env.VITE_N8N_WEBHOOK_BASE;
-            const webhookUrl = n8nBase ? n8nBase + (n8nConfig?.facebook_autopost_webhook || '/facebook-autopost') : null;
+            const webhookUrl = n8nBase ? n8nBase + (n8nConfig?.facebook_autopost_webhook || n8nConfig?.facebook_webhook || '/facebook-autopost') : null;
 
             if (webhookUrl) {
                 try {

@@ -103,7 +103,7 @@ export function CreateInvoiceDialog({
             const { data: settingsData } = await (supabase.from('company_settings') as any).select('n8n_config').single();
             const n8nConfig = settingsData?.n8n_config as any;
             const n8nBase = n8nConfig?.webhook_base || (import.meta as any).env.VITE_N8N_WEBHOOK_BASE;
-            const n8nWebhookUrl = n8nBase ? n8nBase + (n8nConfig?.facture_webhook || '/envoi-facture') : null;
+            const n8nWebhookUrl = n8nBase ? n8nBase + (n8nConfig?.facture_webhook || '/devis-to-facture') : null;
 
             if (n8nWebhookUrl) {
                 const legacyPayload = {

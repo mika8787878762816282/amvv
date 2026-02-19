@@ -78,9 +78,10 @@ export function VisualisationAI({ companySettings }: { companySettings: any }) {
 
             const result = await response.json();
 
-            // Assume result has generated_url or base64
-            if (result.image_url) {
-                setResultUrl(result.image_url);
+            // Accept multiple response formats from n8n workflows
+            const imageUrl = result.image_url || result.resultImage || result.generated_url;
+            if (imageUrl) {
+                setResultUrl(imageUrl);
                 toast.success("Image générée avec succès !");
                 refetch();
             } else {
