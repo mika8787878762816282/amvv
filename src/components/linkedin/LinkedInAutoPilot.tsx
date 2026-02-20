@@ -8,12 +8,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { CircleHelp, Linkedin, Link as LinkIcon, Save, Send, Settings2, Wrench } from "lucide-react";
+import { CircleHelp, Copy, Linkedin, Link as LinkIcon, Save, Send, Settings2, Wrench } from "lucide-react";
 
 export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySettings: any; onUpdated?: () => void }) {
   const [saving, setSaving] = useState(false);
   const [posting, setPosting] = useState(false);
   const [helpModal, setHelpModal] = useState<"how" | "vars" | "tech" | null>(null);
+  const [clientConnectModal, setClientConnectModal] = useState(false);
 
   const cfg = useMemo(() => {
     const n8n = (companySettings?.n8n_config || {}) as any;
@@ -38,6 +39,7 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
   const n8nBase = n8nConfig?.webhook_base || (import.meta as any).env.VITE_N8N_WEBHOOK_BASE;
   const connectPath = n8nConfig?.linkedin_connect_webhook || "/linkedin-connect";
   const connectUrl = n8nBase ? `${n8nBase}${connectPath}` : `${window.location.origin}/webhook/linkedin-connect`;
+  const clientInviteMessage = `Bonjour 👋\n\nClique sur ce lien pour connecter ton compte LinkedIn au système de publication :\n${connectUrl}\n\nUne fois connecté, je pourrai publier après validation Telegram.`;
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -113,6 +115,15 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
     }
   };
 
+  const copyText = async (text: string, successMsg: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(successMsg);
+    } catch {
+      toast.error("Impossible de copier automatiquement");
+    }
+  };
+
   const postNow = async (isTest = false) => {
     if (!effectivePostText) {
       toast.error("Le texte du post est vide");
@@ -185,6 +196,9 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
           <a href={connectUrl} target="_blank" rel="noreferrer">
             <Button variant="outline"><LinkIcon className="w-4 h-4 mr-2" />Connecter LinkedIn</Button>
           </a>
+          <Button variant="secondary" onClick={() => setClientConnectModal(true)}>
+            <LinkIcon className="w-4 h-4 mr-2" />Popup connexion client
+          </Button>
           <Badge variant="secondary">Cible par défaut: Freelances automation</Badge>
         </div>
       </div>
@@ -254,6 +268,25 @@ export function LinkedInAutoPilot({ companySettings, onUpdated }: { companySetti
           <pre className="whitespace-pre-wrap text-sm bg-muted/40 rounded-lg p-4 border">{effectivePostText}</pre>
         </CardContent>
       </Card>
+
+      <Dialog open={clientConnectModal} onOpenChange={setClientConnectModal}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Connexion LinkedIn client</DialogTitle></DialogHeader>
+          <div className="space-y-3 text-sm">
+            <p>Envoie ce lien au client pour qu’il connecte son compte LinkedIn directement (sans interface AMG).</p>
+            <div className="rounded border p-3 bg-muted/30 break-all">{connectUrl}</div>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" onClick={() => copyText(connectUrl, "Lien copié ✅")}>
+                <Copy className="w-4 h-4 mr-2" />Copier le lien
+              </Button>
+              <Button variant="outline" onClick={() => copyText(clientInviteMessage, "Message client copié ✅")}>
+                <Copy className="w-4 h-4 mr-2" />Copier le message prêt à envoyer
+              </Button>
+            </div>
+            <Textarea readOnly value={clientInviteMessage} className="min-h-[130px]" />
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={helpModal === "how"} onOpenChange={(o) => !o && setHelpModal(null)}>
         <DialogContent>
