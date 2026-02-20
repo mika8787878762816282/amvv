@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recherche Motion Designer - Mascotte Cœur Cartoon</title>
+<meta name="description" content="Recherche d'un motion designer / animateur 2D-3D pour animer une mascotte cœur cartoon pour les réseaux sociaux.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a24;
+    --card: #22223a;
+    --accent: #e74c6f;
+    --accent2: #ff6b9d;
+    --text: #f0f0f5;
+    --muted: #9a9ab0;
+    --radius: 16px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(231,76,111,0.25) 0%, transparent 70%);
+    pointer-events: none;
+    animation: pulse 4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:.6; transform: translateX(-50%) scale(1); }
+    50% { opacity:1; transform: translateX(-50%) scale(1.1); }
+  }
+
+  /* Floating hearts */
+  .hearts-container { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .floating-heart {
+    position: absolute;
+    font-size: 2rem;
+    animation: floatUp 8s ease-in infinite;
+    opacity: 0;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: .7; }
+    90% { opacity: .3; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+
+  .mascot {
+    font-size: 8rem;
+    margin-bottom: 1.5rem;
+    animation: bounce 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 40px rgba(231,76,111,0.5));
+  }
+  @keyframes bounce {
+    0%,100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-15px) scale(1.05); }
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2), #ffb3d0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero .subtitle {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    color: var(--muted);
+    max-width: 600px;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    background: var(--card);
+    border: 1px solid rgba(231,76,111,0.3);
+    border-radius: 999px;
+    padding: .5rem 1.2rem;
+    font-size: .9rem;
+    color: var(--accent2);
+    margin-bottom: 2rem;
+    animation: fadeIn 1s ease .3s both;
+  }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+  /* Section */
+  .section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+  .section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: .5rem;
+    text-align: center;
+  }
+  .section-sub {
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 3rem;
+    font-size: 1.05rem;
+  }
+
+  /* Cards grid */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 2rem;
+    transition: transform .3s, box-shadow .3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(231,76,111,0.15);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: .5rem; }
+  .card p { color: var(--muted); font-size: .95rem; line-height: 1.6; }
+
+  /* Requirements */
+  .req-list {
+    max-width: 600px;
+    margin: 0 auto;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .req-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    border: 1px solid rgba(255,255,255,0.04);
+    transition: background .2s;
+  }
+  .req-list li:hover { background: var(--card); }
+  .req-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+  .req-text { font-size: 1rem; line-height: 1.5; }
+  .req-text strong { color: var(--accent2); }
+
+  /* CTA */
+  .cta-section {
+    text-align: center;
+    padding: 5rem 2rem;
+    position: relative;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(231,76,111,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 8px 30px rgba(231,76,111,0.3);
+  }
+  .cta-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 12px 40px rgba(231,76,111,0.45);
+  }
+
+  /* Specs strip */
+  .specs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .spec {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    min-width: 140px;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .spec-value { font-size: 1.5rem; font-weight: 800; color: var(--accent2); }
+  .spec-label { font-size: .8rem; color: var(--muted); margin-top: .3rem; }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    font-size: .85rem;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hearts-container" id="heartsContainer"></div>
+  <div class="badge">🎨 Recherche créative</div>
+  <div class="mascot">❤️</div>
+  <h1>Motion Designer<br>Mascotte Cœur Cartoon</h1>
+  <p class="subtitle">
+    Recherche d'un(e) animateur(trice) 2D/3D talentueux(se) pour donner vie à une mascotte attachante. 
+    40 illustrations vectorielles prêtes. Animations courtes pour les réseaux sociaux.
+  </p>
+  <div class="specs">
+    <div class="spec"><div class="spec-value">40+</div><div class="spec-label">Illustrations</div></div>
+    <div class="spec"><div class="spec-value">5-10s</div><div class="spec-label">Par animation</div></div>
+    <div class="spec"><div class="spec-value">3-5</div><div class="spec-label">Animations test</div></div>
+    <div class="spec"><div class="spec-value">2D / 3D</div><div class="spec-label">Format</div></div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">Le projet en bref</h2>
+  <p class="section-sub">Donner vie à un personnage unique pour les réseaux sociaux</p>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🎭</div>
+      <h3>Mascotte Cœur</h3>
+      <p>Un personnage cartoon attachant basé sur un cœur stylisé. Expressif, fun, et reconnaissable en un clin d'œil.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📱</div>
+      <h3>Réseaux sociaux</h3>
+      <p>Animations optimisées pour Instagram, TikTok, LinkedIn et Facebook. Formats carrés, stories et feed.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <h3>Court & impactant</h3>
+      <p>Chaque animation dure 5 à 10 secondes. Assez pour capter l'attention et véhiculer un message fort.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">Ce que je recherche</h2>
+  <p class="section-sub">Merci de me partager</p>
+  <ul class="req-list">
+    <li>
+      <span class="req-icon">🎬</span>
+      <div class="req-text"><strong>Portfolio</strong> — Exemples d'animation de personnages/mascottes. Montrez-moi votre meilleur travail.</div>
+    </li>
+    <li>
+      <span class="req-icon">🛠️</span>
+      <div class="req-text"><strong>Outils</strong> — After Effects, Cinema 4D, Blender, Spine… Quels sont vos logiciels de prédilection ?</div>
+    </li>
+    <li>
+      <span class="req-icon">💰</span>
+      <div class="req-text"><strong>Budget & délais</strong> — Estimation pour 3 à 5 animations test. Transparent et réaliste.</div>
+    </li>
+    <li>
+      <span class="req-icon">🤝</span>
+      <div class="req-text"><strong>Disponibilité</strong> — Quand pouvez-vous commencer ? Collaboration long terme possible.</div>
+    </li>
+  </ul>
+</section>
+
+<section class="cta-section">
+  <h2 class="section-title" style="margin-bottom: 1rem;">Intéressé(e) ?</h2>
+  <p class="section-sub" style="margin-bottom: 2rem;">Contactez-moi directement sur LinkedIn</p>
+  <a href="https://www.linkedin.com/in/michael-sibony/" class="cta-btn" target="_blank" rel="noopener">
+    💬 Me contacter sur LinkedIn
+  </a>
+</section>
+
+<footer>
+  © 2026 Michael Sibony · Recherche Motion Designer · Mascotte Cœur Cartoon
+</footer>
+
+<script>
+  // Floating hearts
+  const container = document.getElementById('heartsContainer');
+  const hearts = ['❤️','💖','💗','💕','💓','🩷'];
+  for (let i = 0; i < 15; i++) {
+    const h = document.createElement('div');
+    h.className = 'floating-heart';
+    h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+    h.style.left = Math.random() * 100 + '%';
+    h.style.animationDelay = Math.random() * 8 + 's';
+    h.style.animationDuration = (6 + Math.random() * 6) + 's';
+    h.style.fontSize = (1.2 + Math.random() * 2) + 'rem';
+    container.appendChild(h);
+  }
+</script>
+</body>
+</html>
