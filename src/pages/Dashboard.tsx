@@ -30,6 +30,7 @@ import {
     Linkedin,
     Send,
     LogOut,
+    PenTool,
 } from "lucide-react";
 import { CreateQuoteDialog } from "@/components/quotes/CreateQuoteDialog";
 import { CreateInvoiceDialog } from "@/components/invoices/CreateInvoiceDialog";
@@ -46,6 +47,7 @@ import { UserManagement } from "@/pages/admin/UserManagement";
 import { ClientsCRM } from "@/components/crm/ClientsCRM";
 import { FacebookAutoPost } from "@/components/facebook/FacebookAutoPost";
 import { LinkedInAutoPilot } from "@/components/linkedin/LinkedInAutoPilot";
+import { SignatureManager } from "@/components/signatures/SignatureManager";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Dashboard = () => {
@@ -187,6 +189,7 @@ const Dashboard = () => {
         { id: "prospection", icon: Search, label: "Prospection" },
         { id: "facebook", icon: Facebook, label: "Auto-Post FB" },
         { id: "linkedin_auto", icon: Linkedin, label: "Auto-Post LinkedIn" },
+        { id: "signatures", icon: PenTool, label: "Signatures" },
         { id: "fichiers", icon: FolderOpen, label: "Fichiers" },
         { id: "users", icon: Users, label: "Utilisateurs" },
         { id: "parametres", icon: SettingsIcon, label: "Paramètres" },
@@ -550,6 +553,7 @@ const Dashboard = () => {
                         {activeTab === "prospection" && <FacebookProspecting />}
                         {activeTab === "facebook" && <FacebookAutoPost companySettings={companySettings} />}
                         {activeTab === "linkedin_auto" && <LinkedInAutoPilot companySettings={companySettings} />}
+                        {activeTab === "signatures" && <SignatureManager />}
                         {activeTab === "fichiers" && <FileManager />}
                     </div>
                 </main>
